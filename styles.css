@@ -1,0 +1,64 @@
+:root {
+  --gameboard-size: min(50vh, 50vw);
+  --4x-color: #053b50;
+  --3x-color: #176b87;
+  --2x-color: #64ccc5;
+  --1x-color: #eeeeee;
+}
+body,
+body * {
+  padding: 0;
+  margin: 0;
+  outline: none;
+  border: none;
+}
+.container {
+  font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell,
+    "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: var(--1x-color);
+  height: 100vh;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+.flex-space {
+  justify-content: flex-start;
+  align-items: center;
+  gap: min(3rem, 15%);
+}
+header {
+  letter-spacing: 6px;
+  font-size: 3rem;
+  font-weight: bold;
+  height: 6rem;
+  background-color: var(--3x-color);
+  color: var(--2x-color);
+}
+footer {
+  height: 2rem;
+}
+.main {
+  padding-top: 2rem;
+  flex: 1;
+}
+.main p {
+  font-size: 2rem;
+}
+.gameboard {
+  display: grid;
+  grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+  width: var(--gameboard-size);
+  height: var(--gameboard-size);
+  border: 2px solid var(--4x-color);
+  box-sizing: border-box;
+}
+.field {
+  background-color: white;
+  border: 1px solid var(--4x-color);
+  font-size: calc(var(--gameboard-size) / 6);
+}
