@@ -1,4 +1,5 @@
 const Player = (sign) => {
+  let score = 0;
   const getSign = () => sign;
   let selectedFields = [];
   const addSelectedField = (i) => {
@@ -6,6 +7,7 @@ const Player = (sign) => {
   };
   const reset = () => {
     selectedFields = [];
+    resetScore();
   };
   const winingPatterns = [
     [0, 1, 2],
@@ -22,12 +24,28 @@ const Player = (sign) => {
       pattern.every((field) => selectedFields.includes(field))
     );
   };
-  return { getSign, addSelectedField, checkWin, reset };
+  const updateScore = () => {
+    score++;
+  };
+  const resetScore = () => {
+    score = 0;
+  };
+  const getScore = () => score;
+
+  return {
+    getSign,
+    addSelectedField,
+    checkWin,
+    reset,
+    updateScore,
+    resetScore,
+    getScore,
+  };
 };
 
 const GameBoard = (() => {
   const gameBoard = ["", "", "", "", "", "", "", "", ""];
-  const EmptyFields = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  let EmptyFields = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
   const removeEmptyField = (i) => {
     EmptyFields.splice(EmptyFields.indexOf(i), 1);
@@ -46,7 +64,9 @@ const GameBoard = (() => {
   const reset = () => {
     for (let i = 0; i < gameBoard.length; i++) {
       gameBoard[i] = "";
+      render();
     }
+    EmptyFields = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   };
   const render = () => {
     for (let i = 0; i < gameBoard.length; i++) {
@@ -55,47 +75,75 @@ const GameBoard = (() => {
     }
   };
 
-  return { render, setField, getEmptyFields, checkField };
+  return { render, setField, getEmptyFields, checkField, reset };
 })();
 
 const PlayGame = (() => {
   let continueGame = true;
   let player1 = Player("X");
   let player2 = Player("O");
+  const getPlayer1 = () => player1;
+  const getPlayer2 = () => player2;
   let gameBoard = GameBoard;
   let currentPlayer = player1;
-  const tie = () => {
-    if (gameBoard.getEmptyFields().length === 0) {
+  const tie = (elm) => {
+    if (
+      gameBoard.getEmptyFields().length === 0 &&
+      !player1.checkWin() &&
+      !player2.checkWin()
+    ) {
       continueGame = false;
-      console.log("It's a tie!");
+      elm.textContent = "It's a tie!";
     }
   };
-  const win = (player) => {
+  const win = (player, elm) => {
     if (player.checkWin()) {
+      player.updateScore();
       continueGame = false;
-      console.log(`${player.getSign()} wins!`);
-      return true;
+      elm.textContent = `Player ${player.getSign()} wins!`;
     }
   };
   const switchPlayer = () => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   };
+  const currentPlayerSign = () => {
+    if (currentPlayer === player1) {
+      return "X";
+    } else {
+      return "O";
+    }
+  };
+  const resetAll = () => {
+    player1.reset();
+    player2.reset();
+    gameBoard.reset();
+    continueGame = true;
+  };
   const playRound = (i) => {
     if (gameBoard.checkField(i)) {
       gameBoard.setField(i, currentPlayer.getSign());
       currentPlayer.addSelectedField(i);
-      win(currentPlayer);
-      tie();
+      win(currentPlayer, cmnts);
+      tie(cmnts);
       if (continueGame) {
         switchPlayer();
       }
     }
   };
   const getContinueGame = () => continueGame;
-  return { playRound, getContinueGame };
+  return {
+    playRound,
+    getContinueGame,
+    getPlayer1,
+    getPlayer2,
+    resetAll,
+    currentPlayerSign,
+  };
 })();
 
 const fields = document.querySelectorAll(".field");
+const cmnts = document.querySelector(".cmnts");
+const restartBtn = document.querySelector(".restart");
 
 const handleClick = (e) => {
   const index = parseInt(e.target.getAttribute("data-index"));
@@ -103,9 +151,17 @@ const handleClick = (e) => {
   GameBoard.render();
   if (!PlayGame.getContinueGame()) {
     fields.forEach((field) => field.removeEventListener("click", handleClick));
+  } else {
+    cmnts.textContent = "player " + PlayGame.currentPlayerSign() + " turn";
   }
 };
 
 fields.forEach((field) =>
   field.addEventListener("click", handleClick, { once: true })
 );
+restartBtn.addEventListener("click", () => {
+  PlayGame.resetAll();
+  fields.forEach((field) =>
+    field.addEventListener("click", handleClick, { once: true })
+  );
+});

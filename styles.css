@@ -29,7 +29,7 @@ body * {
 .flex-space {
   justify-content: flex-start;
   align-items: center;
-  gap: min(3rem, 15%);
+  gap: min(2.5rem, 15%);
 }
 header {
   letter-spacing: 6px;
@@ -42,6 +42,7 @@ header {
 footer {
   height: 2rem;
 }
+
 .main {
   padding-top: 2rem;
   flex: 1;
@@ -61,4 +62,16 @@ footer {
   background-color: white;
   border: 1px solid var(--4x-color);
   font-size: calc(var(--gameboard-size) / 6);
+}
+.restart {
+  background-color: var(--3x-color);
+  border: 2px solid var(--4x-color);
+  color: var(--1x-color);
+  border-radius: 6px;
+  font-size: 2em;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+.restart:active {
+  transform: translateY(4px);
 }
